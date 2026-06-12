@@ -1,0 +1,3 @@
+El codigo esta hecho con una arquitectura rara propia de esa materia.
+Hacer todo el codigo de 0, revisar algo de logica por si sirve.
+Ya tenemos las instrucciones en proyectos.
