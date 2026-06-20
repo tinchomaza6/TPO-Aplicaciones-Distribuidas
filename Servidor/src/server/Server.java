@@ -21,8 +21,8 @@ public class Server {
 		try {
     		LocateRegistry.createRegistry(1099);
             InterfazRemota ir = new ObjetoRemoto();
-            Naming.rebind ("rmi://localhost/circuitoPedidos", ir);
-            System.out.println("Servidor Iniciado en rmi://localhost/circuitoPedidos");
+            Naming.rebind ("//localhost/circuitoPedidos", ir);
+            System.out.println("Servidor Iniciado en //localhost/circuitoPedidos");
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			//JOptionPane.showMessageDialog(null, "Error de iniciaización del objeto remoto");
@@ -33,6 +33,12 @@ public class Server {
 	
 	public static void main(String[] args) throws RemoteException {
 		new Server();
-		//BusinessDelegate.getInstancia().cargarTodasUbicacionesYArticulos();
+		try {
+			BusinessDelegate.getInstancia().cargarTodasUbicacionesYArticulos();
+			System.out.println("Ubicaciones y Articulos Deposito cargados con exito");
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }

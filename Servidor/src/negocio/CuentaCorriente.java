@@ -41,6 +41,14 @@ public class CuentaCorriente {
 		this.saldo = saldo;
 		this.movimientos = new ArrayList<MovimientoCtaCte>();
 	}
+	
+	public CuentaCorriente(String especie, float saldo) {
+		super();
+		this.fecha = Calendar.getInstance().getTime();
+		this.especie = especie;
+		this.saldo = saldo;
+		this.movimientos = new ArrayList<MovimientoCtaCte>();
+	}
 
 	public float consultarSaldo(){
 		return this.saldo;
@@ -64,6 +72,18 @@ public class CuentaCorriente {
 		this.update();
 	}
 	
+	/*public void nuevoMovimientoRestaGeneral(Date fecha, float monto, String descripcion) throws CuentaCorrienteException {
+		MovimientoCtaCte mov = new MovimientoCtaCte(this, fecha, monto, descripcion);
+		int id = mov.save();
+		mov.setNroMov(id);
+		this.movimientos.add(mov);
+		this.saldo -= monto;
+		this.updateSaldo();
+	}*/
+	/*private void updateSaldo() {
+		CuentaCorrienteDao.getInstancia().updateSaldo(this);
+	}*/
+
 	public void update() throws CuentaCorrienteException {
 		CuentaCorrienteDao.getInstancia().update(this);
 	}
@@ -113,6 +133,11 @@ public class CuentaCorriente {
 		}
 		return cuentadto;
 	}
+	
+	public int save() {
+		return CuentaCorrienteDao.getInstancia().save(this);
+		
+	}
 
 	//Getters y Setters
 
@@ -148,4 +173,6 @@ public class CuentaCorriente {
 	public void setMovimientos(List<MovimientoCtaCte> movimientos) {
 		this.movimientos = movimientos;
 	}
+
+
 }

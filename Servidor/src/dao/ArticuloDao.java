@@ -2,6 +2,7 @@ package dao;
 
 import hibernate.HibernateUtil;
 import negocio.Articulo;
+import negocio.ArticuloDeposito;
 import negocio.Pedido;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class ArticuloDao {
 			Session session = sf.openSession();
 			session.beginTransaction();
 			session.delete(articulo.toEntityUpdate());
-			session.flush();
+			session.flush(); 
 			session.getTransaction().commit();
 			session.close();
 		} else {
@@ -98,8 +99,15 @@ public class ArticuloDao {
 	
 	}
 
-
-	
+	public List<Articulo> cargarArticulos() {
+		Session session = sf.openSession();
+		Query query = session.createQuery("select c from ArticuloEntity c");
+		@SuppressWarnings("unchecked")
+		List<ArticuloEntity> artEnt = query.list();
+		List<Articulo> devolver = new ArrayList<Articulo>();
+		for(ArticuloEntity ae : artEnt)
+			devolver.add(ae.toNegocio());
+		return devolver;
+	}
 
 }
-

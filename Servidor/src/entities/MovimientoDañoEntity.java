@@ -9,27 +9,33 @@ import negocio.MovimientoDaño;
 @DiscriminatorValue("DAÑO")
 
 public class MovimientoDañoEntity extends MovimientoEntity{
-
 	private static final long serialVersionUID = 7616669139282081664L;
+	
 	private String destino;
 	private String encargado;
 	private String autorizante;
-	private String descripcion;
 
 	public MovimientoDañoEntity() {
 		super();
 	}
 
 	public MovimientoDañoEntity(Integer idMov, Date fecha, String tipoMovimiento, ArticuloEntity articulo, String destino, String encargado, String autorizante, String descripcion) {
-		super(idMov, fecha, tipoMovimiento, articulo);
+		super(idMov, fecha, tipoMovimiento, articulo, descripcion);
 		this.destino = destino;
 		this.encargado = encargado;
 		this.autorizante = autorizante;
-		this.descripcion = descripcion;
+	}
+	
+	public MovimientoDañoEntity(Date fecha, String tipoMovimiento, ArticuloEntity articulo, String destino, String encargado, String autorizante, String descripcion) {
+		super(fecha, articulo, descripcion);
+		this.tipoMovimiento="DAÑO";
+		this.destino = destino;
+		this.encargado = encargado;
+		this.autorizante = autorizante;
 	}
 	
 	public MovimientoDaño toNegocio() {
-		return new MovimientoDaño(this.idMov, this.fecha, this.articulo.toNegocio(), this.autorizante, this.destino, this.encargado, this.descripcion, this.autorizante);
+		return new MovimientoDaño(this.idMov, this.fecha, this.articulo.toNegocio(), "DAÑO", this.destino, this.encargado, this.descripicion, this.autorizante);
 	}
 	
 	//GETTERS Y SETTERS
@@ -53,11 +59,9 @@ public class MovimientoDañoEntity extends MovimientoEntity{
 		this.autorizante = autorizante;
 	}
 	public String getDescripcion() {
-		return descripcion;
+		return descripicion;
 	}
 	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+		this.descripicion = descripcion;
 	}
-
-
 }

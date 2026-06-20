@@ -1,11 +1,14 @@
 package controladores;
 import negocio.Pedido;
+
+import java.sql.SQLException;
 import java.util.*;
 
 import javax.swing.JOptionPane;
 
 import dao.ArticuloDao;
 import dao.ClienteDao;
+import dao.CuentaCorrienteDao;
 import dao.PedidoDao;
 import dto.ClienteDTO;
 import dto.FacturaDTO;
@@ -36,33 +39,46 @@ public class ControladorClientes {
 		return instancia;
 	}
 
-	private List<Pedido> pedidosRealizados = new ArrayList<Pedido>();
-	private List<Cliente> misClientes = new ArrayList<Cliente>();
 
-	public void agregarCliente(int dni, String nombre, String rznSoc, int cuit, float limCredito, CuentaCorriente cuentaCorriente, String condEspePago, String notaAdv, String calleDom, int nroDom, String localidadDom, int cpDom) throws ClienteException{
-		Cliente c = new Cliente(dni, nombre, rznSoc, cuit, limCredito, cuentaCorriente, condEspePago, notaAdv, calleDom, nroDom, localidadDom, cpDom);
-		misClientes.add(c);
+	public void agregarCliente(int dni, String nombre, String rznSoc, int cuit, float limCredito, String condEspePago, String notaAdv, String calleDom, int nroDom, String localidadDom, int cpDom) throws ClienteException, SQLException{
+
+			Cliente c = this.buscarClienteByDni(dni);
+			if (c == null) {
+				Cliente cl = new Cliente(dni, nombre, rznSoc, cuit, limCredito, condEspePago, notaAdv, calleDom, nroDom, localidadDom, cpDom);
+				CuentaCorriente cc = new CuentaCorriente("no tiene especie", 0);
+				int id = cc.save();
+				cc.setidCuentaCorriente(id);
+				cl.setCuentaCorriente(cc);
+				cl.save();
+			}
+			else {
+				throw new ClienteException("El cliente ya existe.");
+			}
+
 	}
 
 	public void borrarCliente(int dni) throws ClienteException{
-		ClienteDao.getInstancia().delete(ClienteDao.getInstancia().buscarClienteByDni(dni));
-		for(Cliente c : misClientes) {
-			if(c.getDni() == dni) {
-				misClientes.remove(c);
-				break;
-			}	
-		}
+		Cliente c = this.buscarClienteByDni(dni);
+		c.delete();
+	}
+	
+	public void modificarCliente(int dni, String nombre, String razonSocial, float limiteCredito, String condiciones, String notasAdv, String calle, int nroDirecc, String localidad, int cp) throws ClienteException {
+		Cliente c = this.buscarClienteByDni(dni);
+		c.setNombre(nombre);
+		c.setRazonSocial(razonSocial);
+		c.setLimiteCredito(limiteCredito);
+		c.setCondEspPago(condiciones);
+		c.setNotasAdv(notasAdv);
+		c.setCalleDom(calle);
+		c.setNroDom(nroDirecc);
+		c.setLocalidadDom(localidad);
+		c.setCpDom(cp);
+		c.update();
 	}
 
-	public Cliente buscarClienteByDni(int dni) throws ClienteException{
-		for (Cliente c : misClientes){
-			if (c.getDni() == dni)
-				return c;
-		}
+	public Cliente buscarClienteByDni(int dni) {
+		return ClienteDao.getInstancia().buscarClienteByDni(dni);
 		
-		Cliente cliente = ClienteDao.getInstancia().buscarClienteByDni(dni);
-		misClientes.add(cliente);
-		return cliente;
 	}
 
 	public List<PedidoDTO> buscarPedidosByEstado(String estado) throws PedidoException{
@@ -77,89 +93,86 @@ public class ControladorClientes {
 	public Pedido buscarPedidoById(int nroPedido) throws PedidoException {
 		return PedidoDao.getInstancia().buscarPedidoById(nroPedido);
 	}
+	
+	public PedidoDTO buscarPedidoDTOById(int nroPedido) throws PedidoException {
+		Pedido p = PedidoDao.getInstancia().buscarPedidoById(nroPedido);
+		return p.toDTO();
+	}
 
-
+	public List<PedidoDTO> buscarPedidosByCliente(String dni) throws NumberFormatException, PedidoException {
+		List<PedidoDTO> pDTO = new ArrayList<PedidoDTO>();
+		for (Pedido p : PedidoDao.getInstancia().buscarPedidosByCliente(Integer.parseInt(dni))) {
+			pDTO.add(p.toDTO());
+		}
+		return pDTO;
+	}
 	
 
-	public void altaPedido(List<ItemPedidoDTO> itemsPedido, String estado, ClienteDTO clienteDTO, String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio, int cpDirecEnvio) throws ClienteException, ArticuloException, PedidoException, OrdenDePedidoException, ProveedorException, OrdenDeCompraException, FacturaException, RemitoException, CuentaCorrienteException{
+	public void altaPedido(List<ItemPedidoDTO> itemsPedido, String estado, ClienteDTO clienteDTO, String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio, int cpDirecEnvio, String aclaracion) throws ClienteException, ArticuloException, PedidoException, OrdenDePedidoException, ProveedorException, OrdenDeCompraException, FacturaException, RemitoException, CuentaCorrienteException{
 		if (itemsPedido.size()<=0)
 			throw new PedidoException("El pedido no tiene items asociados");
 		int id;
 		Date fechaGeneracion = Calendar.getInstance().getTime();
-		Date fechaDespacho = Calendar.getInstance().getTime(); // ponemos null o que inicialice todo en el dia de hoy?
-		Date fechaEntregaEsperada = Calendar.getInstance().getTime();
-		Date fechaEntrega = Calendar.getInstance().getTime();
+		Date fechaDespacho = null;
+		Date fechaEntregaEsperada = null;
+		Date fechaEntrega = null;
 		float precioTotalBruto = 0;
 		float precioTotalFinal = 0;
 		Cliente cliente = null;
 		cliente = buscarClienteByDni(clienteDTO.getDni());
-		Pedido pedido = new Pedido(estado ,cliente, fechaGeneracion, fechaDespacho,fechaEntregaEsperada, fechaEntrega, precioTotalBruto, precioTotalFinal, formaDePago, calleDireccEnvio, nroDireccEnvio, localidadDireccEnvio, cpDirecEnvio);
+		Pedido pedido = new Pedido(estado ,cliente, fechaGeneracion, fechaDespacho,fechaEntregaEsperada, fechaEntrega, precioTotalBruto, precioTotalFinal, formaDePago, calleDireccEnvio, nroDireccEnvio, localidadDireccEnvio, cpDirecEnvio, aclaracion);
 		id = pedido.save();
 		pedido.setNroPedido(id);
 		for(ItemPedidoDTO item : itemsPedido){
+			if (item.getCant()<=0) {
+				throw new ArticuloException("La cantidad de " + item.getArticulo().getNombre() + " es 0");
+			}
 			Articulo articulo = null;
 			articulo = ArticuloDao.getInstancia().buscarArticuloById(item.getArticulo().getIdArticulo()); 
 			if (articulo != null){
 				pedido.nuevoItemPedido(item.getCant(),articulo);		
 			}
 		}
-		pedidosRealizados.add(pedido);
-		autorizarPedido(true, pedido.toDTO()); //no va a estar mas aca
-		//justo despues de autorizarlo, hay que facturarlo porque se pierde la cantidad de cada item ya que se va restando y muestra la cantidad pendiente
+		pedido.setPrecioTotalBruto(pedido.getPrecioTotalBruto());
+		pedido.setPrecioTotalFinal(pedido.getPrecioTotalFinal());
+		pedido.update();
 	}
 
-	public void autorizarPedido(boolean autorizado, PedidoDTO pedido) throws PedidoException, ArticuloException, OrdenDePedidoException, ProveedorException, OrdenDeCompraException, ClienteException, FacturaException, RemitoException, CuentaCorrienteException{
-		if (autorizado) {
-			ControladorFacturacion.getInstancia().facturarPedido(ControladorClientes.getInstancia().buscarPedidoById(pedido.getNroPedido()));
-			ControladorFacturacion.getInstancia().generarRemito(ControladorClientes.getInstancia().buscarPedidoById(pedido.getNroPedido()));
-		}
-		boolean memoria = false;
-		for (Pedido p : pedidosRealizados){
-			if (p.getNroPedido() == pedido.getNroPedido() && memoria == false){
-				memoria = true;
-				if (autorizado==true){
-					p.setEstado("APROBADO");
-					p.update();
-					ControladorDeposito.getInstancia().verificarExistenciaStock(p);
-				}
-				else
-				{
-					p.setEstado("RECHAZADO");
-					p.update();
-				}
-			}
-		}
-		if (memoria == false){
-			Pedido p = PedidoDao.getInstancia().buscarPedidoById(pedido.getNroPedido());
+	public void autorizarPedido(boolean autorizado, String idPedido, String aclaracion) throws NumberFormatException, PedidoException, ArticuloException, OrdenDePedidoException, ProveedorException, OrdenDeCompraException {
+			Pedido p = PedidoDao.getInstancia().buscarPedidoById(Integer.parseInt(idPedido));
 			if (autorizado == true)
 			{
 				p.setEstado("APROBADO");
+				p.setAclaracion(aclaracion);
 				p.update();
 				ControladorDeposito.getInstancia().verificarExistenciaStock(p);
 			}
 			else
 			{
 				p.setEstado("RECHAZADO");
+				p.setAclaracion(aclaracion);
 				p.update();
 			}
 		}
-	}
 	
-	//cambiar a objetos facturadto y clientedto
-	public void pagarFactura(int facturaDTO, int clienteDTO) throws FacturaException, ClienteException, CuentaCorrienteException {
-		Factura f = ControladorFacturacion.getInstancia().buscarFacturaById(facturaDTO);
-		Cliente c = this.buscarClienteByDni(clienteDTO);
+	
+	public void pagarFactura(FacturaDTO facturaDTO) throws FacturaException, ClienteException, CuentaCorrienteException {
+		Factura f = ControladorFacturacion.getInstancia().buscarFacturaById(facturaDTO.getNroFactura());
+		Cliente c = this.buscarClienteByDni(facturaDTO.getCliente().getDni());
 		c.pagarFactura(f);
 	}
-	//cambiar a objeto clientedto
-	public void cargarSaldoCliente(int clienteDTO, float monto) throws ClienteException, CuentaCorrienteException {
-		Cliente c = this.buscarClienteByDni(clienteDTO);
-		c.cargarSaldo(monto);
-		JOptionPane.showMessageDialog(null, "Carga de saldo exitosa por un monto de " + monto);
+	
+	public List<String> pagoDeFacturas(ClienteDTO c) throws ClienteException, FacturaException, CuentaCorrienteException {
+		Cliente cli = this.buscarClienteByDni(c.getDni());
+		return cli.pagoDeFacturas();
 	}
-	//cambiar a objeto clientedto
-	public void pagoDeFacturas(int clienteDTO) throws ClienteException, FacturaException, CuentaCorrienteException {
-		Cliente c = this.buscarClienteByDni(clienteDTO);
-		c.pagoDeFacturas();
+
+	public void agregarSaldo(ClienteDTO c, float monto) throws CuentaCorrienteException, ClienteException {
+		Cliente cliente = this.buscarClienteByDni(c.getDni());
+		Date fecha = Calendar.getInstance().getTime();
+		if (monto <= 0) {
+			throw new CuentaCorrienteException("Saldo cero o negativo.");
+		}
+		cliente.getCuentaCorriente().nuevoMovimientoCarga(fecha, monto, "Carga de saldo");
 	}
 }

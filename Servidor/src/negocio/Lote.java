@@ -27,7 +27,7 @@ public class Lote {
 		return new LoteEntity(this.fechaVenc);
 	}
 	
-	public LoteEntity toEntityUpdate() {
+	public LoteEntity toEntityUpdate() { 
 		return new LoteEntity(this.idLote,this.fechaVenc);
 	}
 

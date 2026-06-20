@@ -4,6 +4,7 @@ import java.util.*;
 import java.io.*;
 import javax.persistence.*;
 
+import negocio.Articulo;
 import negocio.Proveedor;
 
 @Entity
@@ -12,7 +13,7 @@ import negocio.Proveedor;
 public class ProveedorEntity implements Serializable{
 
 	private static final long serialVersionUID = -7255115411009073474L;
-	
+
 	@Id
 	private Integer idProv;
 	private String nombre;
@@ -20,13 +21,13 @@ public class ProveedorEntity implements Serializable{
 	private String descripcion;
 	private String direccion;
 	private String telefonoContacto;
-	
-	 @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	 @JoinTable(name = "ProveedoresArticulos", 
-	        joinColumns = { @JoinColumn(name = "idProv") }, 
-	        inverseJoinColumns = { @JoinColumn(name = "idArticulo") })
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "ProveedoresArticulos", 
+	joinColumns = { @JoinColumn(name = "idProv") }, 
+	inverseJoinColumns = { @JoinColumn(name = "idArticulo") })
 	private List<ArticuloEntity> articulos;
-	 
+
 	public ProveedorEntity() {}
 
 	public ProveedorEntity(Integer idProv, String nombre, int cuit, String descripcion, String direccion,
@@ -40,7 +41,7 @@ public class ProveedorEntity implements Serializable{
 		this.telefonoContacto = telefonoContacto;
 		this.articulos = articulos;
 	}
-	
+
 	//GETTERS Y SETTERS
 
 	public Integer getIdProv() {
@@ -100,7 +101,17 @@ public class ProveedorEntity implements Serializable{
 	}
 
 	public Proveedor toNegocio() {
-		return new Proveedor(this.idProv, this.nombre, this.cuit, this.descripcion, this.direccion, this.telefonoContacto);
+		Proveedor p =new Proveedor(this.idProv, this.nombre, this.cuit, this.descripcion, this.direccion, this.telefonoContacto);
+		p.setArticulos(this.getArticulosNegocio());
+		return p;
 	}
-	
+
+	private List<Articulo> getArticulosNegocio() {
+		List<Articulo> arts = new ArrayList<Articulo>();
+		for (ArticuloEntity a: this.articulos) {
+			arts.add(a.toNegocio());
+		}
+		return arts;
+	}
+
 }

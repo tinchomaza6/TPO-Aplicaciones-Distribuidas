@@ -1,6 +1,7 @@
 /controladores/
 /dao/
 /entities/
+/hibernate.properties
 /hibernate/
 /negocio/
 /objetoRemoto/

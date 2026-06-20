@@ -6,13 +6,22 @@ import javax.swing.JOptionPane;
 
 import dao.ArticuloDao;
 import dao.ArticuloDepositoDao;
+import dao.LoteDao;
+import dao.MovimientoDao;
 import dao.OrdenDePedidoDao;
 import dao.PedidoDao;
 import dao.ProveedoresDao;
 import dao.UbicacionDao;
 import dto.ArticuloDTO;
+import dto.ArticuloDepositoDTO;
+import dto.MovimientoAjusteDTO;
+import dto.MovimientoDañoDTO;
+import dto.MovimientoSimpleDTO;
+import dto.MovimientoStockDTO;
 import dto.UbicacionDTO;
 import excepciones.ArticuloException;
+import excepciones.LoteException;
+import excepciones.MovimientoException;
 import excepciones.OrdenDeCompraException;
 import excepciones.OrdenDePedidoException;
 import excepciones.PedidoException;
@@ -22,6 +31,10 @@ import negocio.Ubicacion;
 import negocio.Articulo;
 import negocio.ArticuloDeposito;
 import negocio.ItemPedido;
+import negocio.Lote;
+import negocio.MovimientoAjuste;
+import negocio.MovimientoDaño;
+import negocio.MovimientoSimple;
 import negocio.OrdenDePedido;
 import negocio.Pedido;
 import negocio.Proveedor;
@@ -39,8 +52,8 @@ public class ControladorDeposito {
 	}
 
 	private List<Ubicacion> ubicaciones = new ArrayList<Ubicacion>();
-	private List<OrdenDePedido> orDePedidos = new ArrayList<OrdenDePedido>();
-	
+
+
 	public void completarPedidosRestantes(int nroPedido) throws PedidoException, ArticuloException, OrdenDePedidoException {
 		//este se llama para buscar todos los pedidos que no generaron una orden de pedido porque ya existia una para determinado articulo
 		List<Pedido> pedidosRestantes = PedidoDao.getInstancia().buscarPedidosByEstadoPorOrden("APROBADO_EN_ESPERA_STOCK", nroPedido);
@@ -97,8 +110,6 @@ public class ControladorDeposito {
 				ordenPedido.setEstado("COMPLETADA");
 				ordenPedido.update();
 			}
-			else JOptionPane.showMessageDialog(null, "orden dio null");
-			//modificar el array pedidosRealizados en ControladorClientes
 		}
 	}
 
@@ -116,7 +127,6 @@ public class ControladorDeposito {
 							a.reservarStock(pedido.getNroPedido());
 							a.update();
 							cantTemp--;
-							//it.setCant(it.getCant()-1);
 						}
 					}
 				}
@@ -136,7 +146,6 @@ public class ControladorDeposito {
 								a.reservarStock(pedido.getNroPedido());
 								a.update();
 								cantTemp--;
-								//it.setCant(it.getCant()-1);
 							}
 					}
 					it.update();
@@ -159,30 +168,19 @@ public class ControladorDeposito {
 					}
 					op.nuevoItemOP(a,cantidadAComprar);
 				}
-				
-				//modificar el array pedidosRealizados en ControladorClientes
-				orDePedidos.add(op);
-				Proveedor prov = ProveedoresDao.getInstancia().buscarProveedorByCuit(2456932); // esto no va a estar mas aca
-				ControladorCompras.getInstancia().emitirOC(op, prov);	 // esto no va a estar mas aca
 			}
-			
 			pedido.setEstado("APROBADO_EN_ESPERA_STOCK");
 			pedido.update();
-	
 		}
-		else
-		{
-
+		else{
 			pedido.setEstado("APROBADO_EN_ESPERA_DE_DESPACHO");
 			pedido.update();
-			//modificar el array pedidosRealizados en ControladorClientes
 		}
 	}
 
 
 	private boolean existeOrdenPedido(Articulo articulo, int cantidad) throws OrdenDePedidoException {
-			// aca no hago el de memoria porque no se sabe si esta completo o incompleto, y deberia hacerlo para todas las OP que existan. si hay 1 sola en cache va a entrar por el if y no va a tener en cuenta todas las demas.
-			return OrdenDePedidoDao.getInstancia().existeOrdenPedido(articulo, cantidad); //Si hay que buscar en la base y agregarlo a memoria, retornar un objeto OP y agregarlo a la cache.
+		return OrdenDePedidoDao.getInstancia().existeOrdenPedido(articulo, cantidad); 
 	}
 
 	public int getCantidadStockTotal(Articulo articulo){
@@ -196,7 +194,7 @@ public class ControladorDeposito {
 		return stockTotal;
 	}
 
-	public void ubicar(List<ArticuloDeposito> articulosRecibidos) throws ArticuloException, UbicacionException{
+	public void ubicar(List<ArticuloDeposito> articulosRecibidos) throws ArticuloException, UbicacionException, MovimientoException{
 		boolean fueInsertado;
 		for (ArticuloDeposito a : articulosRecibidos) {
 			fueInsertado = false;
@@ -207,6 +205,7 @@ public class ControladorDeposito {
 						u.getArticulos().add(a);
 						int id = a.save();
 						a.setIdArticuloDeposito(id);
+						this.movimientoDeStockCarga(a,u);
 						if(u.getEstado().equals("DISPONIBLE")) {
 							u.setEstado("OCUPADA");
 						}
@@ -214,12 +213,17 @@ public class ControladorDeposito {
 						fueInsertado = true;
 					}
 				}
-				//Ubicacion nuevaUbicacion = UbicacionDao.getInstancia().buscarUbicacionById(u.getIdUbicacion());
-				//u = nuevaUbicacion;
 			}
 		}
-
 	}
+	private void movimientoDeStockCarga(ArticuloDeposito a, Ubicacion u) throws MovimientoException {
+		Date fecha = Calendar.getInstance().getTime();
+		Articulo articulo = a.getArticulo();
+		String ubicado = "Articulo: " + articulo.getNombre() + " ubicado en: " + u.getIdUbicacion() + " con Id Deposito: " + a.getIdArticuloDeposito();
+		MovimientoSimple mov = new MovimientoSimple(fecha, articulo, ubicado);
+		mov.save();
+	}
+
 	public void cargarTodasUbicacionesYArticulos() {
 		List<Ubicacion> ubs = UbicacionDao.getInstancia().cargarUbicaciones();
 		List<ArticuloDeposito> arts = ArticuloDepositoDao.getInstancia().cargarArticulosDeposito();
@@ -227,50 +231,61 @@ public class ControladorDeposito {
 			for (ArticuloDeposito a : arts)
 				if (a.getUbicacion().getIdUbicacion().equals(u.getIdUbicacion())) {
 					u.getArticulos().add(a);
-					}
+				}
 			this.ubicaciones.add(u);
 		}
 	}
 
 
-	public void retirar(Pedido pedido) throws UbicacionException{ 
+	public void retirar(Pedido pedido) throws UbicacionException, ArticuloException{
 		for (Ubicacion u : ubicaciones){
+			List<ArticuloDeposito> remover = new ArrayList<ArticuloDeposito>();
 			for (ArticuloDeposito art : u.getArticulos()){
-				if (art.getReservaIdPedido() == pedido.getNroPedido()){
-					u.getArticulos().remove(art);
-					if(u.getArticulos().isEmpty())
-						u.setEstado("DISPONIBLE");
+				if (art.getReservaIdPedido() != null) {
+					if (art.getReservaIdPedido().compareTo(pedido.getNroPedido())==0){
+						remover.add(art);
+						ArticuloDeposito aux = this.buscarArticuloDepositoById(art.getIdArticuloDeposito());
+						aux.delete();
+					}
 				}
+			}
+			u.getArticulos().removeAll(remover);
+			if(u.getArticulos().isEmpty()) {
+				u.setEstado("DISPONIBLE");
 			}
 			u.update();
 		}
 	}
 
-
-	public Ubicacion buscarUbicacionById(String idUbicacion){
-		return null;
-	}
-
 	public ArticuloDTO buscarArticuloById(int idArt) throws ArticuloException{
 		return ArticuloDao.getInstancia().buscarArticuloById(idArt).toDTO();
 	}
-	public void movimientoDeStock(int cant, String tipoMovSimple){
 
+	public Articulo buscarArticuloNegocioById(int idArt) throws ArticuloException{
+		return ArticuloDao.getInstancia().buscarArticuloById(idArt);
 	}
-	public void movimientoDeStock(Articulo articulo, int cant, String tipoMovXDaños, String destino, String encargado, String autorizante, String descripcion){
 
+	public ArticuloDeposito buscarArticuloDepositoById(int idArt) throws ArticuloException{
+		return ArticuloDepositoDao.getInstancia().buscarArticuloById(idArt);
 	}
-	public void movimientoDeStock(Articulo articulo, int cant, String tipoMovAjuste, String encargado, String observacion){
 
-	}
-	public void actualizarStockPorDaño(String destino, String tipo, String encargado, String autorizante, String descripcion, int cant, Articulo articulo){
+	public void movimientoDeStock(ItemPedido item) throws MovimientoException{
+		Date fecha = Calendar.getInstance().getTime();
+		int cant = item.getCant();
+		Articulo art = item.getArticulo();
+		String ubicaciones = this.getUbicacionesRetiradas(item.getPedido(), art);
+		String des = "Despachadas " + cant + " Unid. del articulo: " + art.getNombre() + ubicaciones;
+		MovimientoSimple mov = new MovimientoSimple(fecha, art, des);
+		mov.save();
+	} 
 
-	}
-	public void actualizarStockPorIncosistencia(String tipo, String encargado, String descripcion, int cant, Articulo articulo){
-
-	}
-	public void actualizarStockPorVencimiento(String tipo, int cant, Articulo articulo){
-
+	private String getUbicacionesRetiradas(Pedido pedido, Articulo a) {
+		String ubicaciones = "";
+		List<ArticuloDeposito> articulosDelPedido = ArticuloDepositoDao.getInstancia().buscarArticulosReservados(pedido, a);
+		for (ArticuloDeposito art : articulosDelPedido) {
+			ubicaciones += " / U: " + art.getUbicacion().getIdUbicacion() + " - Id: " + art.getIdArticuloDeposito();
+		}
+		return ubicaciones;
 	}
 
 	public List<UbicacionDTO> getUbicaciones() {
@@ -280,4 +295,78 @@ public class ControladorDeposito {
 		}
 		return u;
 	}
+
+	public List<ArticuloDTO> cargarArticulos() {
+		List<ArticuloDTO> arts = new ArrayList<ArticuloDTO>();
+		for (Articulo a : ArticuloDao.getInstancia().cargarArticulos()) {
+			arts.add(a.toDTO());
+		}
+		return arts;
+	}
+
+	public void registrarFalla(int idArticulo, String encargado, String autorizante, String destino, String descripcion) throws ArticuloException, MovimientoException, UbicacionException {
+		ArticuloDeposito a = this.buscarArticuloDepositoById(idArticulo);
+		Date fecha = Calendar.getInstance().getTime();
+		MovimientoDaño m = new MovimientoDaño(fecha, a.getArticulo(), destino, encargado, descripcion, autorizante);
+		m.save();
+		a.delete();
+		//borrar el articulo de la ubicacion
+		Ubicacion u = UbicacionDao.getInstancia().buscarUbicacionById(a.getUbicacion().getIdUbicacion());
+		u.getArticulos().remove(a);
+		if(u.getArticulos().isEmpty())
+			u.setEstado("DISPONIBLE");
+		u.update();
+	}
+
+	public void registrarInconsistencia(int idArticulo, String encargado, String descripcion, int idLote, String idUbicacion) throws ArticuloException, MovimientoException, LoteException, UbicacionException {
+		//EJEMPLO: hay 10 en el deposito pero 9 en el sistema, entonces se crea un articuloDeposito
+		ArticuloDeposito a = new ArticuloDeposito();
+		Articulo aux = this.buscarArticuloNegocioById(idArticulo);
+		Lote lote = LoteDao.getInstancia().buscarLoteById(idLote);
+		Ubicacion u = UbicacionDao.getInstancia().buscarUbicacionById(idUbicacion);
+		a.setArticulo(aux);
+		a.setEstado("DISPONIBLE");
+		a.setLote(lote);
+		a.setUbicacion(u);
+		a.setReservaIdPedido(null);
+		a.save();
+		Date fecha = Calendar.getInstance().getTime();
+		MovimientoAjuste m = new MovimientoAjuste(fecha, a.getArticulo(), encargado, descripcion);
+		m.save();
+	}
+
+	public void verificarVencimientos() throws MovimientoException, ArticuloException, UbicacionException {
+		Date hoy = Calendar.getInstance().getTime();
+		for(Ubicacion u : ubicaciones) {
+			List<ArticuloDeposito> vencidos = new ArrayList<ArticuloDeposito>();
+			if(!u.getArticulos().isEmpty()) {
+				if((u.getArticulos().get(0).getLote().getFechaVenc()).before(hoy)) {
+					//articulo vencido
+					//en una ubicacion hay articulos de un solo lote, es decir, se vencieron todos los de esa ubiacion
+					for(ArticuloDeposito a : u.getArticulos()) {
+						MovimientoAjuste m = new MovimientoAjuste(hoy, a.getArticulo(), "SISTEMA", "Articulo vencido. Fecha Vencimiento: " + a.getLote().getFechaVenc() + "  -- Fecha al momento de la verificacion: " + hoy);
+						m.save();
+						a.delete();
+						vencidos.add(a);
+					}
+					u.setEstado("DISPONIBLE");
+					u.getArticulos().removeAll(vencidos);
+					u.update();
+				}
+			}
+		}
+	}
+
+	public List<MovimientoAjusteDTO> buscarMovimientosAjuste() {
+		return MovimientoDao.getInstancia().buscarMovimientosAjuste();
+	}
+	
+	public List<MovimientoSimpleDTO> buscarMovimientosSimple() {
+		return MovimientoDao.getInstancia().buscarMovimientosSimple();
+	}
+	public List<MovimientoDañoDTO> buscarMovimientosDaño() {
+		return MovimientoDao.getInstancia().buscarMovimientosDaño();
+	}
+	
+	
 }

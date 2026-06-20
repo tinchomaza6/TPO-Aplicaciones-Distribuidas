@@ -2,6 +2,7 @@ package negocio;
 
 import dao.ItemOrdenDeCompraDao;
 import dto.ItemOrdenDeCompraDTO;
+import dto.OrdenDeCompraDTO;
 import entities.ItemOrdenDeCompraEntity;
 import excepciones.OrdenDeCompraException;
 
@@ -48,12 +49,12 @@ public class ItemOrdenDeCompra {
 		return aux;
 	}
 
-	public ItemOrdenDeCompraDTO toDTO() {
+	public ItemOrdenDeCompraDTO toDTO(OrdenDeCompraDTO oc) {
 		ItemOrdenDeCompraDTO aux = new ItemOrdenDeCompraDTO();
 		aux.setArticulo(this.getArticulo().toDTO());
 		aux.setCantidad(this.getCantidad());
 		aux.setIdItemOC(this.getIdItemOC());
-		aux.setOc(this.getOc().toDTO());
+		aux.setOc(oc);
 		aux.setPrecio(this.getPrecio());
 		return aux;
 	}

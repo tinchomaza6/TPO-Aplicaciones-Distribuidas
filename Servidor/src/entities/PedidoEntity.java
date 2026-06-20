@@ -19,7 +19,6 @@ public class PedidoEntity implements Serializable{
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private Integer nroPedido;
-	
 	private String estado;
 	private Date fechaGeneracion;
 	private Date fechaDespacho;
@@ -34,6 +33,9 @@ public class PedidoEntity implements Serializable{
 	@Column (name="cpDireccEnvio")
 	private int cpDirecEnvio;
 	
+	@Column (name="aclaracion")
+	private String aclaracion;
+	
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="idCliente")
 	private ClienteEntity cliente;
@@ -47,7 +49,7 @@ public class PedidoEntity implements Serializable{
 			Date fechaDespacho,	Date fechaEntregaEsperada, Date fechaEntrega, 
 			float precioTotalBruto, float precioTotalFinal, String formaDePago, 
 			String calleDireccEnvio, int nroDireccEnvio, 
-			String localidadDireccEnvio, int cpDirecEnvio, ClienteEntity cliente) {
+			String localidadDireccEnvio, int cpDirecEnvio, String aclaracion, ClienteEntity cliente) {
 		super();
 		this.nroPedido = nroPedido;
 		this.estado = estado;
@@ -62,6 +64,7 @@ public class PedidoEntity implements Serializable{
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.cliente = cliente;
 		this.itemsPedido = new ArrayList<ItemPedidoEntity>();
 	}
@@ -71,7 +74,7 @@ public class PedidoEntity implements Serializable{
 			Date fechaDespacho,	Date fechaEntregaEsperada, Date fechaEntrega, 
 			float precioTotalBruto, float precioTotalFinal, String formaDePago, 
 			String calleDireccEnvio, int nroDireccEnvio, 
-			String localidadDireccEnvio, int cpDirecEnvio, ClienteEntity cliente, List<ItemPedidoEntity> items) {
+			String localidadDireccEnvio, int cpDirecEnvio, String aclaracion, ClienteEntity cliente, List<ItemPedidoEntity> items) {
 		super();
 		this.nroPedido = nroPedido;
 		this.estado = estado;
@@ -86,6 +89,7 @@ public class PedidoEntity implements Serializable{
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.cliente = cliente;
 		this.itemsPedido = items;
 	}
@@ -94,7 +98,7 @@ public class PedidoEntity implements Serializable{
 			Date fechaDespacho,	Date fechaEntregaEsperada, Date fechaEntrega, 
 			float precioTotalBruto, float precioTotalFinal, String formaDePago, 
 			String calleDireccEnvio, int nroDireccEnvio, 
-			String localidadDireccEnvio, int cpDirecEnvio, ClienteEntity cliente, List<ItemPedidoEntity> items) {
+			String localidadDireccEnvio, int cpDirecEnvio, String aclaracion, ClienteEntity cliente, List<ItemPedidoEntity> items) {
 		super();
 		this.estado = estado;
 		this.fechaGeneracion = fechaGeneracion;
@@ -108,6 +112,7 @@ public class PedidoEntity implements Serializable{
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.cliente = cliente;
 		this.itemsPedido = items;
 	}
@@ -116,7 +121,7 @@ public class PedidoEntity implements Serializable{
 		Pedido p = new Pedido(this.nroPedido, this.estado, this.fechaGeneracion, this.fechaDespacho,
 				this.fechaEntregaEsperada, this.fechaEntrega, this.precioTotalBruto, this.precioTotalFinal,
 				this.formaDePago, this.calleDireccEnvio, this.nroDireccEnvio, this.localidadDireccEnvio,
-				this.cpDirecEnvio, this.cliente.toNegocio());
+				this.cpDirecEnvio, this.aclaracion, this.cliente.toNegocio());
 		p.setItemsPedido(this.getItemsPedidoEntity(p));
 		return p;
 	
@@ -241,6 +246,14 @@ public class PedidoEntity implements Serializable{
 		this.cpDirecEnvio = cpDirecEnvio;
 	}
 
+	public String getAclaracion() {
+		return aclaracion;
+	}
+
+	public void setAclaracion(String aclaracion) {
+		this.aclaracion = aclaracion;
+	}
+	
 	public ClienteEntity getCliente() {
 		return cliente;
 	}
@@ -256,10 +269,5 @@ public class PedidoEntity implements Serializable{
 	public void setItemsPedido(List<ItemPedidoEntity> itemsPedido) {
 		this.itemsPedido = itemsPedido;
 	}
-	
-	
-
-	
-	
 	
 }

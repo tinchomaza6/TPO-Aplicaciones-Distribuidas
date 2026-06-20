@@ -1,11 +1,12 @@
 package dao;
 
-
 import org.hibernate.SessionFactory;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import excepciones.LoteException;
 import hibernate.HibernateUtil;
 import negocio.Lote;
+import entities.LoteEntity;
 
 public class LoteDao {
 
@@ -59,6 +60,18 @@ public class LoteDao {
 		} else {
 			throw new LoteException("Error en el borrado de un lote en la BD");
 		}	
+	}
+
+	public Lote buscarLoteById(int idLote) throws LoteException {
+		LoteEntity loteEntity = null;
+		Session session = sf.openSession();
+		Query query = session.createQuery("select l from LoteEntity l where l.idLote=?");
+		query.setParameter(0, idLote);
+		loteEntity = (LoteEntity) query.uniqueResult();
+		if (loteEntity == null) 
+			throw new LoteException("Error al buscar el lote en la BD");
+		else
+			return loteEntity.toNegocio();
 	}
 
 }

@@ -103,10 +103,11 @@ public class Factura {
 		aux.setCliente(this.cliente.toDTO());
 		aux.setEstado(this.estado);
 		aux.setFecha(this.fecha);
-		aux.setItemsFact(this.getItemsFactDTO());
 		aux.setNroFactura(this.nroFactura);
 		aux.setPedido(this.pedido.toDTO());
 		aux.setTotalFact(this.totalFact);
+		
+		aux.setItemsFact(this.getItemsFactDTO(aux));
 		return aux;
 	}
 
@@ -163,14 +164,13 @@ public class Factura {
 		return items;
 	}
 
-	public List<ItemFacturaDTO> getItemsFactDTO(){
+	public List<ItemFacturaDTO> getItemsFactDTO(FacturaDTO f){
+		//HAY  UN LOOP INFINITO ACA, VOY  A COMER. FIJATE SI LO PODES ARREGLAR
 		List<ItemFacturaDTO> aux = new ArrayList<ItemFacturaDTO>();
-		for(ItemFactura item: itemsFact)
-		{
-			aux.add(item.toDTO());
+		for(ItemFactura item: itemsFact) {
+			aux.add(item.toDTO(f));
 		}
 		return aux;
-
 	}
 
 
@@ -183,6 +183,4 @@ public class Factura {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
-
-
 }

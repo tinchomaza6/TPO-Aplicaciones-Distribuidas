@@ -2,6 +2,7 @@ package negocio;
 
 import dao.ItemOrdenDePedidoDao;
 import dto.ItemOrdenDePedidoDTO;
+import dto.OrdenDePedidoDTO;
 import entities.ItemOrdenDePedidoEntity;
 import excepciones.PedidoException;
 
@@ -14,7 +15,7 @@ public class ItemOrdenDePedido {
 
 	public int save() throws PedidoException{
 		return ItemOrdenDePedidoDao.getInstancia().save(this);
-
+ 
 	}
 	public void delete(){
 
@@ -54,12 +55,12 @@ public class ItemOrdenDePedido {
 
 	}
 
-	public ItemOrdenDePedidoDTO toDTO() {
+	public ItemOrdenDePedidoDTO toDTO(OrdenDePedidoDTO op) {
 		ItemOrdenDePedidoDTO aux = new ItemOrdenDePedidoDTO();
 		aux.setArticulo(this.getArticulo().toDTO());
 		aux.setCant(this.getCant());
 		aux.setIdItemOp(this.getIdItemOp());
-		aux.setOp(this.getOp().toDTO());
+		aux.setOp(op);
 		return aux;
 	}
 

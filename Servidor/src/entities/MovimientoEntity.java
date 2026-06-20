@@ -4,22 +4,27 @@ import java.io.Serializable;
 import java.util.*;
 import javax.persistence.*;
 
+import negocio.Articulo;
+import negocio.MovimientoAjuste;
+import negocio.MovimientoDaño;
+import negocio.MovimientoSimple;
+import negocio.MovimientoStock;
+
 @Entity
 @Table(name="MovimientoStock")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="tipoMovimiento",discriminatorType=DiscriminatorType.STRING, length=10)
+@DiscriminatorColumn(name="tipoMovimiento",discriminatorType=DiscriminatorType.STRING)
 
 public abstract class MovimientoEntity implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4820982784317900909L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer idMov;
 	protected Date fecha;
+	protected String descripicion;
 	
-	@Column (insertable = false, updatable = false)
+	@Column (insertable=false, updatable=false)
 	protected String tipoMovimiento; //DAÑO, AJUSTE O SIMPLE
 	
 	@OneToOne(cascade=CascadeType.PERSIST)
@@ -28,13 +33,24 @@ public abstract class MovimientoEntity implements Serializable{
 	
 	public MovimientoEntity(){}
 	
-	public MovimientoEntity(Integer idMov, Date fecha, String tipoMovimiento, ArticuloEntity articulo) {
+	public MovimientoEntity(Integer idMov, Date fecha, String tipoMovimiento, ArticuloEntity articulo, String descripcion) {
 		super();
 		this.idMov = idMov;
 		this.fecha = fecha;
 		this.tipoMovimiento = tipoMovimiento;
 		this.articulo = articulo;
+		this.descripicion=descripcion;
 	}
+	
+	public MovimientoEntity(Date fecha, ArticuloEntity articulo, String descripcion) {
+		super();
+		this.fecha = fecha;
+		this.articulo = articulo;
+		this.descripicion = descripcion;
+	}
+	
+	public abstract MovimientoStock toNegocio();
+
 
 	//GETTERS Y SETTERS
 
@@ -69,5 +85,4 @@ public abstract class MovimientoEntity implements Serializable{
 	public void setArticulo(ArticuloEntity articulo) {
 		this.articulo = articulo;
 	}
-	
 }

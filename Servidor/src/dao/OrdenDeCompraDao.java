@@ -1,5 +1,8 @@
 package dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.Session;
@@ -7,6 +10,7 @@ import entities.OrdenDeCompraEntity;
 import excepciones.OrdenDeCompraException;
 import hibernate.HibernateUtil;
 import negocio.OrdenDeCompra;
+import negocio.OrdenDePedido;
 
 public class OrdenDeCompraDao {
 	private static OrdenDeCompraDao instancia;
@@ -67,5 +71,30 @@ public class OrdenDeCompraDao {
 			throw new OrdenDeCompraException("Error al buscar la Orden de compra en la BD");
 		else
 			return oc.toNegocio();		
+	}
+
+	public List<OrdenDeCompra> buscarOCCompletadas() {
+		Session session = sf.openSession();
+		Query query = session.createQuery("select o from OrdenDeCompraEntity o order by o.fecha desc");
+		List<OrdenDeCompraEntity> ordenes = query.list();
+		List<OrdenDeCompra> devolver = new ArrayList<OrdenDeCompra>();
+		for (OrdenDeCompraEntity ocent : ordenes) {
+			if(ocent.getEstado().equals("COMPLETADA")) {
+				devolver.add(ocent.toNegocio());
+			}
+		}
+		return devolver;
+	}
+
+	public List<OrdenDeCompra> buscarOCS() {
+		Session session = sf.openSession();
+		Query query = session.createQuery("select o from OrdenDeCompraEntity o order by o.fecha desc");
+		List<OrdenDeCompraEntity> ordenes = query.list();
+		List<OrdenDeCompra> devolver = new ArrayList<OrdenDeCompra>();
+		for (OrdenDeCompraEntity ocent : ordenes) {
+			if(ocent.getEstado().equals("PENDIENTE"))
+				devolver.add(ocent.toNegocio());
+		}
+		return devolver;
 	}
 }

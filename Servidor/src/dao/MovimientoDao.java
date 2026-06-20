@@ -1,16 +1,28 @@
 package dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import dto.MovimientoAjusteDTO;
+import dto.MovimientoDañoDTO;
+import dto.MovimientoSimpleDTO;
+import dto.MovimientoStockDTO;
 import entities.MovimientoAjusteEntity;
 import entities.MovimientoDañoEntity;
+import entities.MovimientoEntity;
 import entities.MovimientoSimpleEntity;
 import excepciones.MovimientoException;
 import hibernate.HibernateUtil;
 import negocio.MovimientoAjuste;
 import negocio.MovimientoDaño;
 import negocio.MovimientoSimple;
+import negocio.MovimientoStock;
 
 public class MovimientoDao {
 
@@ -27,15 +39,13 @@ public class MovimientoDao {
 		return instancia;
 	}
 
-
-
 	public void save(MovimientoSimple movimiento) throws MovimientoException{
 		if (movimiento != null){
 			MovimientoSimpleEntity aux = new MovimientoSimpleEntity();
-			aux.setIdMov(movimiento.getIdMov());
 			aux.setArticulo(movimiento.getArticulo().toEntityUpdate());
 			aux.setFecha(movimiento.getFecha());
 			aux.setTipoMovimiento("SIMPLE");
+			aux.setDescripcion(movimiento.getDescripcion());
 			Session s = sf.openSession();
 			s.beginTransaction();
 			s.save(aux);
@@ -56,7 +66,6 @@ public class MovimientoDao {
 			aux.setAutorizante(movimiento.getAutorizante());
 			aux.setDescripcion(movimiento.getDescripcion());
 			aux.setDestino(movimiento.getDestino());
-			aux.setIdMov(movimiento.getIdMov());
 			Session s = sf.openSession();
 			s.beginTransaction();
 			s.save(aux);
@@ -74,8 +83,7 @@ public class MovimientoDao {
 			aux.setArticulo(movimiento.getArticulo().toEntityUpdate());
 			aux.setEncargado(movimiento.getEncargado());
 			aux.setFecha(movimiento.getFecha());
-			aux.setDescripcion(movimiento.getDescripcion());
-			aux.setIdMov(movimiento.getIdMov());		
+			aux.setDescripcion(movimiento.getDescripcion());		
 			Session s = sf.openSession();
 			s.beginTransaction();
 			s.save(aux);
@@ -94,6 +102,7 @@ public class MovimientoDao {
 			aux.setArticulo(movimiento.getArticulo().toEntityUpdate());
 			aux.setFecha(movimiento.getFecha());
 			aux.setTipoMovimiento("SIMPLE");
+			aux.setDescripcion(movimiento.getDescripcion());
 			Session s = sf.openSession();
 			s.beginTransaction();
 			s.update(aux);
@@ -151,6 +160,7 @@ public class MovimientoDao {
 			aux.setArticulo(movimiento.getArticulo().toEntityUpdate());
 			aux.setFecha(movimiento.getFecha());
 			aux.setTipoMovimiento("SIMPLE");
+			aux.setDescripcion(movimiento.getDescripcion());
 			Session s = sf.openSession();
 			s.beginTransaction();
 			s.delete(aux);
@@ -201,6 +211,48 @@ public class MovimientoDao {
 		}
 	}
 
-
+	public List<MovimientoSimpleDTO> buscarMovimientosSimple() {
+		Session s = sf.openSession();
+		List<MovimientoSimpleDTO> mov = new ArrayList<MovimientoSimpleDTO>();
+		Query query = s.createQuery("select m from MovimientoEntity m"); //agregar que ordene por tipo y fecha para mostrarlos agrupados
+		@SuppressWarnings("unchecked")
+		List<MovimientoEntity> movimientos = query.list();
+		for (MovimientoEntity m : movimientos) {
+			if (m.getTipoMovimiento().equals("SIMPLE")) {
+			mov.add((MovimientoSimpleDTO) m.toNegocio().toDTO());
+			}
+		}
+		return mov;
+	}
+	
+	
+	
+	public List<MovimientoAjusteDTO> buscarMovimientosAjuste() {
+		Session s = sf.openSession();
+		List<MovimientoAjusteDTO> mov =  new ArrayList<MovimientoAjusteDTO>();
+		Query query = s.createQuery("select m from MovimientoEntity m"); //agregar que ordene por tipo y fecha para mostrarlos agrupados
+		@SuppressWarnings("unchecked")
+		List<MovimientoEntity> movimientos = query.list();
+		for (MovimientoEntity m : movimientos) {
+			if (m.getTipoMovimiento().equals("AJUSTE")) {
+				mov.add((MovimientoAjusteDTO) m.toNegocio().toDTO());
+			}
+		}
+		return mov;
+	}
+	
+	
+	public List<MovimientoDañoDTO> buscarMovimientosDaño() {
+		Session s = sf.openSession();
+		List<MovimientoDañoDTO> mov= new ArrayList<MovimientoDañoDTO>();
+		Query query = s.createQuery("select m from MovimientoEntity m"); //agregar que ordene por tipo y fecha para mostrarlos agrupados
+		@SuppressWarnings("unchecked")
+		List<MovimientoEntity> movimientos = query.list();
+		for (MovimientoEntity m : movimientos) {
+			if (m.getTipoMovimiento().equals("DAÑO")) {
+			mov.add((MovimientoDañoDTO) m.toNegocio().toDTO());
+			}
+		}
+		return mov;
+	}
 }
-

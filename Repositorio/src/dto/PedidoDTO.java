@@ -20,13 +20,16 @@ public class PedidoDTO implements Serializable{
 	private int nroDireccEnvio;
 	private String localidadDireccEnvio;
 	private int cpDirecEnvio;
+	private String aclaracion;
 	private List<ItemPedidoDTO> itemsPedido;
+	
+	
 
 
 	public PedidoDTO (int nroPedido, String estado, ClienteDTO cliente, Date fechaGeneracion, 
 			Date fechaDespacho, Date fechaEntregaEsperada, Date fechaEntrega, float precioTotalBruto,
 			float precioTotalFinal, String formaDePago, String calleDireccEnvio, int nroDireccEnvio,
-			String localidadDireccEnvio, int cpDirecEnvio, List<ItemPedidoDTO> itemsPedido){
+			String localidadDireccEnvio, int cpDirecEnvio, String aclaracion, List<ItemPedidoDTO> itemsPedido){
 		super();
 		this.nroPedido = nroPedido;
 		this.estado = estado;
@@ -42,15 +45,16 @@ public class PedidoDTO implements Serializable{
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.itemsPedido = itemsPedido;
 	}
 
 	public PedidoDTO(Integer nroPedido, String estado, ClienteDTO cliente, Date fechaGeneracion, Date fechaDespacho,
 			Date fechaEntregaEsperada, Date fechaEntrega, float precioTotalBruto, float precioTotalFinal,
 			String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio,
-			int cpDirecEnvio) {
+			int cpDirecEnvio, String aclaracion) {
 		super();
-		this.nroPedido = nroPedido;
+		this.nroPedido = nroPedido; 
 		this.estado = estado;
 		this.cliente = cliente;
 		this.fechaGeneracion = fechaGeneracion;
@@ -64,6 +68,7 @@ public class PedidoDTO implements Serializable{
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.itemsPedido = new ArrayList<ItemPedidoDTO>();
 	}
 	
@@ -188,6 +193,30 @@ public class PedidoDTO implements Serializable{
 	}
 
 	public void setItemsPedidoDTO(List<ItemPedidoDTO> itemsPedido) {
+		this.itemsPedido = itemsPedido;
+	}
+
+	public ClienteDTO getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(ClienteDTO cliente) {
+		this.cliente = cliente;
+	}
+
+	public String getAclaracion() {
+		return aclaracion;
+	}
+
+	public void setAclaracion(String aclaracion) {
+		this.aclaracion = aclaracion;
+	}
+
+	public List<ItemPedidoDTO> getItemsPedido() {
+		return itemsPedido;
+	}
+
+	public void setItemsPedido(List<ItemPedidoDTO> itemsPedido) {
 		this.itemsPedido = itemsPedido;
 	}
 }

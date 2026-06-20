@@ -111,7 +111,6 @@ public class ArticuloDepositoEntity implements Serializable{
 		this.idArticuloDeposito = idArticuloDeposito;
 	}
 
-
 	public String getEstado() {
 		return estado;
 	}

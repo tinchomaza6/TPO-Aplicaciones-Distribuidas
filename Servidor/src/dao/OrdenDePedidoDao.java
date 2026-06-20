@@ -45,9 +45,7 @@ public class OrdenDePedidoDao {
 		if (op != null){
 			Session s = sf.openSession();
 			s.beginTransaction();
-			JOptionPane.showMessageDialog(null, "antes update");
 			s.update(op.toEntityUpdate());
-			JOptionPane.showMessageDialog(null, "despues update");
 			s.flush();
 			s.getTransaction().commit();
 			s.close();
@@ -71,7 +69,7 @@ public class OrdenDePedidoDao {
 
 	public List<OrdenDePedido> cargarTodasOrdenPedido() throws OrdenDePedidoException{
 		List<OrdenDePedido> ordenes = new ArrayList<OrdenDePedido>();
-		Session session = sf.openSession();
+		Session session = sf.openSession(); 
 		Query query = session.createQuery("select o from OrdenDePedidoEntity o");
 		@SuppressWarnings("unchecked")
 		List<OrdenDePedidoEntity> ordenesEntity = query.list();
@@ -101,8 +99,8 @@ public class OrdenDePedidoDao {
 		OrdenDePedidoEntity ord = null;
 		Session session = sf.openSession();
 		session.beginTransaction();
-		Query query = session.createQuery("from OrdenDePedidoEntity o where o.idOp=?");
-		query.setInteger(0, idOp);
+		Query query = session.createQuery("select o from OrdenDePedidoEntity o where o.idOP=?");
+		query.setParameter(0, idOp); 
 		ord = (OrdenDePedidoEntity) query.uniqueResult();
 		session.flush();
 		session.getTransaction().commit();
@@ -128,4 +126,16 @@ public class OrdenDePedidoDao {
 		return null;
 	}
 
+	public List<OrdenDePedido> buscarOPS() {
+		List<OrdenDePedido> ordenes = new ArrayList<OrdenDePedido>();
+		Session session = sf.openSession();
+		Query query = session.createQuery("select o from OrdenDePedidoEntity o");
+		@SuppressWarnings("unchecked")
+		List<OrdenDePedidoEntity> ordenesEntity = query.list();
+		for(OrdenDePedidoEntity oe : ordenesEntity)
+			if(oe.getEstado().equals("PENDIENTE DE PROVEEDOR")) {
+				ordenes.add(oe.toNegocio2());
+			}
+		return ordenes;
+	}
 }

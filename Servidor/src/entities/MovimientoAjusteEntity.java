@@ -9,22 +9,25 @@ import negocio.MovimientoAjuste;
 @DiscriminatorValue("AJUSTE")
 
 public class MovimientoAjusteEntity extends MovimientoEntity {
-	
-
 	private static final long serialVersionUID = 3609250510543411955L;
+	
 	private String encargado;
-	private String descripcion;
 	
 	public MovimientoAjusteEntity() {}
 
 	public MovimientoAjusteEntity(Integer idMov, Date fecha, String tipoMovimiento, ArticuloEntity articulo, String encargado, String descripcion) {
-		super(idMov, fecha, tipoMovimiento, articulo);
+		super(idMov, fecha, tipoMovimiento, articulo, descripcion);
 		this.encargado = encargado;
-		this.descripcion = descripcion;
+	}
+	
+	public MovimientoAjusteEntity(Date fecha, ArticuloEntity articulo, String encargado, String descripcion) {
+		super(fecha, articulo, descripcion);
+		this.tipoMovimiento="AJUSTE";
+		this.encargado = encargado;
 	}
 	
 	public MovimientoAjuste toNegocio() {
-		return new MovimientoAjuste(this.idMov, this.fecha, this.articulo.toNegocio(), this.descripcion, this.encargado, this.descripcion);
+		return new MovimientoAjuste(this.idMov, this.fecha, this.articulo.toNegocio(), "AJUSTE", this.encargado, this.descripicion);
 	}
 
 	//GETTERS Y SETTERS
@@ -36,11 +39,9 @@ public class MovimientoAjusteEntity extends MovimientoEntity {
 		this.encargado = encargado;
 	}
 	public String getDescripcion() {
-		return descripcion;
+		return descripicion;
 	}
 	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+		this.descripicion = descripcion;
 	}
-	
-
 }

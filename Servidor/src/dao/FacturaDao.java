@@ -78,12 +78,12 @@ public class FacturaDao {
 		}	
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
 	public List<Factura> buscarFacturasByCliente(int dni) throws FacturaException {
 		List<Factura> devolver = new ArrayList<Factura>();
 		Session s = sf.openSession();
 		s.beginTransaction();
 		Query query =  s.createQuery("select f from FacturaEntity f order by f.nroFactura");
+		@SuppressWarnings("unchecked")
 		List<FacturaEntity> aux = query.list();
 		if (aux != null){
 			for(FacturaEntity fac : aux) {

@@ -10,7 +10,6 @@ public class ClienteDTO implements Serializable {
 	private String nombre;
 	private String razonSocial;
 	private int cuit;
-	private String cuil;
 	private float limiteCredito;
 	private CuentaCorrienteDTO cuentaCorriente;
 	private String condEspPago;
@@ -21,9 +20,10 @@ public class ClienteDTO implements Serializable {
 	private int cpDom;
 	
 	public ClienteDTO() {
+		super();
 	}
 
-	public ClienteDTO(int dni, String nombre, String razonSocial, int cuit, String cuil, float limiteCredito,
+	public ClienteDTO(int dni, String nombre, String razonSocial, int cuit, float limiteCredito,
 			CuentaCorrienteDTO cuentaCorriente, String condEspPago, String notasAdv, String calleDom, int nroDom,
 			String localidadDom, int cpDom) {
 		super();
@@ -31,7 +31,6 @@ public class ClienteDTO implements Serializable {
 		this.nombre = nombre;
 		this.razonSocial = razonSocial;
 		this.cuit = cuit;
-		this.cuil = cuil;
 		this.limiteCredito = limiteCredito;
 		this.cuentaCorriente = cuentaCorriente;
 		this.condEspPago = condEspPago;
@@ -74,14 +73,6 @@ public class ClienteDTO implements Serializable {
 
 	public void setCuit(int cuit) {
 		this.cuit = cuit;
-	}
-
-	public String getCuil() {
-		return cuil;
-	}
-
-	public void setCuil(String cuil) {
-		this.cuil = cuil;
 	}
 
 	public float getLimiteCredito() {
@@ -155,9 +146,4 @@ public class ClienteDTO implements Serializable {
 	public void setCpDom(int cpDom) {
 		this.cpDom = cpDom;
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 }

@@ -25,13 +25,14 @@ public class Pedido {
 	private int nroDireccEnvio;
 	private String localidadDireccEnvio;
 	private int cpDirecEnvio;
+	private String aclaracion;
 	private List<ItemPedido> itemsPedido;
 
 
 	public Pedido(Integer nroPedido, String estado, Cliente cliente, Date fechaGeneracion, Date fechaDespacho,
 			Date fechaEntregaEsperada, Date fechaEntrega, float precioTotalBruto, float precioTotalFinal,
 			String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio,
-			int cpDirecEnvio) {
+			int cpDirecEnvio, String aclaracion) {
 		super();
 		this.nroPedido = nroPedido;
 		this.estado = estado;
@@ -47,12 +48,13 @@ public class Pedido {
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 	}	
 
 	public Pedido(String estado, Cliente cliente, Date fechaGeneracion, Date fechaDespacho,
 			Date fechaEntregaEsperada, Date fechaEntrega, float precioTotalBruto, float precioTotalFinal,
 			String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio,
-			int cpDirecEnvio) {
+			int cpDirecEnvio, String aclaracion) {
 		super();
 		this.estado = estado;
 		this.cliente = cliente;
@@ -67,13 +69,14 @@ public class Pedido {
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.itemsPedido = new ArrayList<ItemPedido>();
 	}	
 
 	public Pedido(Integer nroPedido, String estado, Date fechaGeneracion, Date fechaDespacho,
 			Date fechaEntregaEsperada, Date fechaEntrega, float precioTotalBruto, float precioTotalFinal,
 			String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio,
-			int cpDirecEnvio, Cliente cliente, List<ItemPedido> itemsPedido) {
+			int cpDirecEnvio, String aclaracion, Cliente cliente, List<ItemPedido> itemsPedido) {
 		//se usa para pasar la entity a negocio
 		super();
 		this.nroPedido = nroPedido;
@@ -90,13 +93,14 @@ public class Pedido {
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.itemsPedido = itemsPedido;
 	}
 
 	public Pedido(Integer nroPedido, String estado, Date fechaGeneracion, Date fechaDespacho,
 			Date fechaEntregaEsperada, Date fechaEntrega, float precioTotalBruto, float precioTotalFinal,
 			String formaDePago, String calleDireccEnvio, int nroDireccEnvio, String localidadDireccEnvio,
-			int cpDirecEnvio, Cliente cliente) {
+			int cpDirecEnvio, String aclaracion, Cliente cliente) {
 		//se usa para pasar la entity a negocio
 		super();
 		this.nroPedido = nroPedido;
@@ -113,6 +117,7 @@ public class Pedido {
 		this.nroDireccEnvio = nroDireccEnvio;
 		this.localidadDireccEnvio = localidadDireccEnvio;
 		this.cpDirecEnvio = cpDirecEnvio;
+		this.aclaracion = aclaracion;
 		this.itemsPedido = new ArrayList<ItemPedido>();
 	}
 
@@ -122,7 +127,7 @@ public class Pedido {
 				this.getFechaDespacho(),this.getFechaEntregaEsperada(), this.getFechaEntrega(), 
 				this.getPrecioTotalBruto(), this.getPrecioTotalFinal(), this.getFormaDePago(), 
 				this.getCalleDireccEnvio(), this.getNroDireccEnvio(), 
-				this.getLocalidadDireccEnvio(), this.getCpDirecEnvio(), this.getCliente().toEntity(), this.getItemsPedidoEntity() );
+				this.getLocalidadDireccEnvio(), this.getCpDirecEnvio(), this.aclaracion, this.getCliente().toEntity(), this.getItemsPedidoEntity() );
 		return aux;
 	}
 	
@@ -131,18 +136,21 @@ public class Pedido {
 				this.getFechaDespacho(),this.getFechaEntregaEsperada(), this.getFechaEntrega(), 
 				this.getPrecioTotalBruto(), this.getPrecioTotalFinal(), this.getFormaDePago(), 
 				this.getCalleDireccEnvio(), this.getNroDireccEnvio(), 
-				this.getLocalidadDireccEnvio(), this.getCpDirecEnvio(), this.getCliente().toEntity(), this.getItemsPedidoEntity() );
+				this.getLocalidadDireccEnvio(), this.getCpDirecEnvio(), this.aclaracion, this.getCliente().toEntity(), this.getItemsPedidoEntity() );
 		return aux;
 	}
 
 
 
-	public PedidoDTO toDTO() {	
-		return new PedidoDTO(this.nroPedido, this.estado, this.cliente.toDTO(), this.fechaGeneracion, 
+	public PedidoDTO toDTO() {					
+		PedidoDTO p = new PedidoDTO(this.nroPedido, this.estado, this.cliente.toDTO(), this.fechaGeneracion, 
 				this.fechaDespacho,this.fechaEntregaEsperada, this.fechaEntrega, 
 				this.precioTotalBruto, this.precioTotalFinal, this.formaDePago, 
 				this.calleDireccEnvio, this.nroDireccEnvio, 
-				this.localidadDireccEnvio, this.cpDirecEnvio, this.getItemsPedidoDTO());
+				this.localidadDireccEnvio, this.cpDirecEnvio, this.aclaracion);
+		p.setItemsPedido(this.getItemsPedidoDTO(p));
+		return p;
+
 	}
 
 	//Getters y Setters
@@ -263,7 +271,23 @@ public class Pedido {
 		return itemsPedido;
 	}
 
+	public String getAclaracion() {
+		return aclaracion;
+	}
 
+	public void setAclaracion(String aclaracion) {
+		this.aclaracion = aclaracion;
+	}
+
+	public void setPrecioTotalBruto(float precioTotalBruto) {
+		this.precioTotalBruto = precioTotalBruto;
+	}
+
+	public void setPrecioTotalFinal(float precioTotalFinal) {
+		this.precioTotalFinal = precioTotalFinal;
+	}
+
+	
 	public List<ItemPedidoEntity> getItemsPedidoEntity() {
 		List<ItemPedidoEntity> items = new ArrayList<ItemPedidoEntity>();
 		ItemPedidoEntity aux = new ItemPedidoEntity();
@@ -275,26 +299,31 @@ public class Pedido {
 					it.getPedido().getFechaDespacho(),it.getPedido().getFechaEntregaEsperada(), it.getPedido().getFechaEntrega(), 
 					it.getPedido().getPrecioTotalBruto(), it.getPedido().getPrecioTotalFinal(), it.getPedido().getFormaDePago(), 
 					it.getPedido().getCalleDireccEnvio(), it.getPedido().getNroDireccEnvio(), 
-					it.getPedido().getLocalidadDireccEnvio(), it.getPedido().getCpDirecEnvio(), it.getPedido().getCliente().toEntity());
+					it.getPedido().getLocalidadDireccEnvio(), it.getPedido().getCpDirecEnvio(), it.getPedido().getAclaracion(), it.getPedido().getCliente().toEntity());
 			aux.setPedido(pedentity);
 			items.add(aux);
 		}
 		return items;
 	}
 
-	public List<ItemPedidoDTO> getItemsPedidoDTO() {
-		List<ItemPedidoDTO> items = new ArrayList<ItemPedidoDTO>();
-		ItemPedidoDTO aux = new ItemPedidoDTO();
-		for (ItemPedido it: itemsPedido) {
-			aux.setArticulo(it.getArticulo().toDTO());
-			aux.setCant(it.getCant());
-			aux.setIdItemPedido(it.getIdItemPedido());
-			PedidoDTO pedidoDto = new PedidoDTO(nroPedido, estado, cliente.toDTO(), fechaGeneracion, fechaDespacho, fechaEntregaEsperada, fechaEntrega, precioTotalBruto, precioTotalFinal, formaDePago, calleDireccEnvio, nroDireccEnvio, localidadDireccEnvio, cpDirecEnvio);
-			aux.setPedidoDTO(pedidoDto);
-			items.add(aux);
+	
+	
+	
+	
+	private List<ItemPedidoDTO> getItemsPedidoDTO(PedidoDTO p) {
+		List<ItemPedidoDTO> aux = new ArrayList<ItemPedidoDTO>();
+		for (ItemPedido item : itemsPedido) {
+			ItemPedidoDTO it = new ItemPedidoDTO();
+			it.setPedidoDTO(p);
+			it.setArticulo(item.getArticulo().toDTO());
+			it.setCant(item.getCant());
+			it.setIdItemPedido(item.getIdItemPedido());
+			aux.add(it);
 		}
-		return items;
+		return aux;
 	}
+
+	
 	public void setItemsPedido(List<ItemPedido> itemsPedido) {
 		this.itemsPedido = itemsPedido;
 	}

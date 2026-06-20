@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -44,29 +45,25 @@ public class ClienteDao {
 		}	
 	}
 
-	public Cliente buscarClienteByDni(int dni) throws ClienteException  {
+	public Cliente buscarClienteByDni(int dni)   {
 		ClienteEntity ce = null;
 		Session session = sf.openSession();
 		Query query = session.createQuery("select c from ClienteEntity c where c.dni=?");
 		query.setParameter(0, dni);
 		ce = (ClienteEntity) query.uniqueResult();
 		if (ce == null) 
-			throw new ClienteException("Error al buscar el Cliente en la BD");
+			return null; //throw new ClienteException("Cliente no encontrado");
 		else
 			return ce.toNegocio();		
 	}
 
-	public void save(Cliente c) throws ClienteException{
-		if (c != null){
-			Session session = sf.openSession();
-			session.beginTransaction();
-			session.save(c.toEntity());
-			session.flush();
-			session.getTransaction().commit();
-			session.close();
-		}else{
-			throw new ClienteException("Error en el guardado del cliente en la BD");
-		}
+	public void save(Cliente c) throws SQLException{
+		Session session = sf.openSession();
+		session.beginTransaction();
+		session.save(c.toEntity());
+		session.flush();
+		session.getTransaction().commit();
+		session.close();
 	}
 
 	public void update(Cliente c) throws ClienteException {

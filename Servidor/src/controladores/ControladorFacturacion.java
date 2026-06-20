@@ -4,6 +4,7 @@ import java.util.*;
 import dao.ArticuloDao;
 import dao.ClienteDao;
 import dao.FacturaDao;
+import dto.FacturaDTO;
 import excepciones.ArticuloException;
 import excepciones.ClienteException;
 import excepciones.FacturaException;
@@ -27,25 +28,19 @@ public class ControladorFacturacion {
 		return instancia;
 	}
 
-	public void despachar(Pedido pedido){
-
-	}
-
-	private List<Factura> misFacturas = new ArrayList<Factura>();
-	private List<Remito> misRemitos = new ArrayList<Remito>();
-
-
 	public void facturarPedido(Pedido pedido) throws PedidoException, ArticuloException, FacturaException, ClienteException{
 		Date fecha = Calendar.getInstance().getTime();
 		Cliente clienteNegocio = ClienteDao.getInstancia().buscarClienteByDni(pedido.getCliente().getDni());
 		Factura factura = new Factura(fecha, pedido, clienteNegocio, pedido.getPrecioTotalFinal());
-		int id = factura.save();
+		if(pedido.getFormaDePago().equals("EFECTIVO")) {
+			factura.aplicarDescuento(10);
+		}
+		int id = factura.save(); 
 		factura.setNroFactura(id);
 		for(ItemPedido item : pedido.getItemsPedido()){
 			Articulo art = ArticuloDao.getInstancia().buscarArticuloById(item.getArticulo().getIdArticulo()); 
 			factura.nuevoItemFact(art, item.getCant(), (art.getPrecioVentaUnitario() * item.getCant()));
 		}
-		misFacturas.add(factura);
 	}
 
 
@@ -59,20 +54,22 @@ public class ControladorFacturacion {
 			Articulo art = ArticuloDao.getInstancia().buscarArticuloById(item.getArticulo().getIdArticulo()); 
 			remito.nuevoItemRem(art, item.getCant(), (art.getPrecioVentaUnitario() * item.getCant()));
 		}
-		misRemitos.add(remito);
 	}
 
 	public Factura buscarFacturaById(int nroFactura) throws FacturaException {
-		for (Factura f : misFacturas)
-			if (f.getNroFactura() == nroFactura)
-				return f;
-		
-		Factura factura = FacturaDao.getInstancia().buscarFacturaById(nroFactura);
-		misFacturas.add(factura);
-		return factura;
+		return FacturaDao.getInstancia().buscarFacturaById(nroFactura);
 	}
 	
 	public List<Factura> buscarFacturasByCliente(int dni) throws FacturaException{
 		return FacturaDao.getInstancia().buscarFacturasByCliente(dni);
+	}
+	
+	public List<FacturaDTO> buscarFacturasDTOByCliente(int dni) throws FacturaException{
+		List<Factura> facturas = FacturaDao.getInstancia().buscarFacturasByCliente(dni);
+		List<FacturaDTO> devolver = new ArrayList<FacturaDTO>();
+		for (Factura f : facturas) {
+			devolver.add(f.toDTO());
+		}
+		return devolver;
 	}
 }

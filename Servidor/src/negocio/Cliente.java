@@ -1,11 +1,16 @@
 package negocio;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import controladores.ControladorFacturacion;
 import dao.ClienteDao;
+import dao.CuentaCorrienteDao;
 import dto.ClienteDTO;
 import entities.ClienteEntity;
 import excepciones.ClienteException;
@@ -48,6 +53,21 @@ public class Cliente {
 		super();
 	}
 
+	public Cliente(int dni, String nombre, String razonSocial, int cuit, float limiteCredito, String condEspPago, String notasAdv, String calleDom, int nroDom,
+			String localidadDom, int cpDom) {
+		super();
+		this.dni = dni;
+		this.nombre = nombre;
+		this.razonSocial = razonSocial;
+		this.cuit = cuit;
+		this.limiteCredito = limiteCredito;
+		this.condEspPago = condEspPago;
+		this.notasAdv = notasAdv;
+		this.calleDom = calleDom;
+		this.nroDom = nroDom;
+		this.localidadDom = localidadDom;
+		this.cpDom = cpDom;
+	}
 	public ClienteEntity toEntity(){
 		ClienteEntity aux = new ClienteEntity();
 		aux.setDni(this.dni);
@@ -82,7 +102,7 @@ public class Cliente {
 		return cliD;
 	}
 
-	public void save() throws ClienteException {
+	public void save() throws SQLException {
 		ClienteDao.getInstancia().save(this);
 
 	}
@@ -163,14 +183,12 @@ public class Cliente {
 	}
 
 	public void pagarFactura(Factura factura) throws FacturaException, CuentaCorrienteException {
-		//genera dos movimientos: uno carga saldo y otro resta. ambos por el valor de la factura aplicandole un descuento
-		float desc = 10;
-		factura.aplicarDescuento(desc);
+		//genera dos movimientos: uno carga saldo y otro resta. ambos por el valor de la factura
 		Date fecha = Calendar.getInstance().getTime();
 		this.cuentaCorriente.nuevoMovimientoCarga(fecha, factura.getTotalFact(), "Carga de saldo para pago de factura numero " + factura.getNroFactura());
-		this.cuentaCorriente.nuevoMovimientoResta(fecha, factura.getTotalFact(), "Pago con descuento de factura numero " + factura.getNroFactura());
+		this.cuentaCorriente.nuevoMovimientoResta(fecha, factura.getTotalFact(), "Pago de factura numero " + factura.getNroFactura());
 		factura.setEstado("PAGADA");
-		factura.update();
+		factura.update(); 
 	}
 	
 	public void cargarSaldo(float monto) throws CuentaCorrienteException {
@@ -178,15 +196,24 @@ public class Cliente {
 		this.cuentaCorriente.nuevoMovimientoCarga(fecha, monto, "Carga de saldo");
 	}
 	
-	public void pagoDeFacturas() throws FacturaException, CuentaCorrienteException {
+	public List<String> pagoDeFacturas() throws FacturaException, CuentaCorrienteException {
+		List<String> facturasPagadas = new ArrayList<String>();
 		List<Factura> facturas = ControladorFacturacion.getInstancia().buscarFacturasByCliente(this.dni);
 		Date fecha = Calendar.getInstance().getTime();
 		for(Factura f : facturas) {
 			if(this.cuentaCorriente.consultarSaldo() >= f.getTotalFact()){
 				this.cuentaCorriente.nuevoMovimientoResta(fecha, f.getTotalFact(), "Pago de factura numero " + f.getNroFactura());
+				facturasPagadas.add(Integer.toString(f.getNroFactura()));
 				f.setEstado("PAGADA");
 				f.update();
 			}
 		}
+		return facturasPagadas;
+	}
+	public void delete() throws ClienteException {
+		ClienteDao.getInstancia().delete(this);
+	}
+	public void update() throws ClienteException {
+		ClienteDao.getInstancia().update(this);
 	}
 }

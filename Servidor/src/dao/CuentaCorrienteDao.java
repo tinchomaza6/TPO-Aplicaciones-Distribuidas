@@ -1,9 +1,13 @@
 package dao;
 
 
+import javax.swing.JOptionPane;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+
+import entities.ClienteEntity;
 import entities.CuentaCorrienteEntity;
 import excepciones.CuentaCorrienteException;
 import hibernate.HibernateUtil;
@@ -22,18 +26,18 @@ public class CuentaCorrienteDao {
 		return instancia;
 	}
 
-	public void save(CuentaCorriente cuentaCorriente) throws CuentaCorrienteException{
+	public int save(CuentaCorriente cuentaCorriente) {
 		if (cuentaCorriente!=null){
 			Session session = sf.openSession();
 			session.beginTransaction();
-			session.save(cuentaCorriente.toEntitySave());
+			int id= (Integer) session.save(cuentaCorriente.toEntitySave());
 			session.flush();
 			session.getTransaction().commit();
 			session.close();
+			return id;
 		}
-		else{
-			throw new CuentaCorrienteException("Error en el guardado de la cuenta corriente");
-		}
+		return 0;
+	
 	}
 
 	public void update(CuentaCorriente cuentaCorriente) throws CuentaCorrienteException {
@@ -50,17 +54,28 @@ public class CuentaCorrienteDao {
 		}
 	}
 
-
-	public CuentaCorrienteEntity getCuentaCorrienteByCuit(int cuit) throws CuentaCorrienteException   {
-		CuentaCorrienteEntity cc = null;
+	public CuentaCorrienteEntity getCuentaCorrienteByDni(int dni) throws CuentaCorrienteException   {
+		ClienteEntity cliente = null;
 		Session session = sf.openSession();
-		Query query = session.createQuery("select t from ClienteEntity c inner join CuentaCorrienteEntity t on c.cuentaCorriente = t.idCuentaCorriente where c.cuit=?");
-		query.setParameter(0, cuit);
-		cc = (CuentaCorrienteEntity) query.uniqueResult();
-		if (cc!=null)
+		Query query = session.createQuery("select c from ClienteEntity c where c.dni=?");
+		query.setParameter(0, dni);
+		cliente = (ClienteEntity) query.uniqueResult();
+		if (cliente.getCuentaCorriente()==null)
 			throw new CuentaCorrienteException("Error al obtener la cuenta corriente en la BD");
 		else
-			return cc;
+			return cliente.getCuentaCorriente();
 	}
-
+	
+	
+	/*public void updateSaldo(CuentaCorriente cuentaCorriente) {
+		if (cuentaCorriente!=null){
+			Session s = sf.openSession();
+			Query query = s.createQuery("update CuentaCorrienteEntity set saldo = ? where idCuentaCorriente = ?");
+			query.setParameter(0, cuentaCorriente.consultarSaldo());
+			query.setParameter(1, cuentaCorriente.getidCuentaCorriente());
+			query.executeUpdate();
+			s.flush();
+			s.close();
+		}
+	}*/
 }

@@ -2,6 +2,8 @@ package negocio;
 
 import java.util.*;
 
+import javax.swing.JOptionPane;
+
 import dto.ArticuloDTO;
 import dto.ProveedorDTO;
 import entities.ArticuloEntity;
@@ -43,7 +45,7 @@ public class Proveedor {
 
 	public ProveedorEntity toEntity() {
 		ProveedorEntity aux = new ProveedorEntity();
-		aux.setArticulos(this.getArticulosEntity());
+		aux.setArticulos(this.getArticulosEntity()); 
 		aux.setCuit(this.getCuit());
 		aux.setDescripcion(this.getDescripcion());
 		aux.setDireccion(this.getDireccion());
@@ -65,10 +67,6 @@ public class Proveedor {
 		return aux;
 	}
 
-
-	public void enviarPedido(){
-
-	}
 
 	//Getters y Setters
 
@@ -144,6 +142,4 @@ public class Proveedor {
 	public void setArticulos(List<Articulo> articulos) {
 		this.articulos = articulos;
 	}
-
-
 }

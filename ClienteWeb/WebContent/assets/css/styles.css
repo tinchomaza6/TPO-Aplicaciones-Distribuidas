@@ -1,0 +1,301 @@
+div.content{
+  align-content:center;
+}
+
+form.contentForm{
+  align-content:center;
+}
+
+.input-sm{
+  height:32px;
+  padding:8px 12px;
+  font-size:12px;
+  line-height:1.4;
+  border-radius:0;
+  align-content:center;
+  text-align:center;
+}
+
+input.form-control.input-sm.center.inputtext{
+  text-align:center;
+  align-content:center;
+}
+
+.form-control{
+  display:block;
+  width:100%;
+  height:39px;
+  padding:10px;
+  font-size:inherit;
+  line-height:1.4;
+  color:#6f6f6f;
+  background-color:#ffffff;
+  background-image:none;
+  border:1px solid #cccccc;
+  border-radius:0;
+  -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);
+  box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);
+  -webkit-transition:border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  -o-transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.input-sm{
+  height:36px;
+  padding:8px 12px;
+  font-size:12px;
+  line-height:1.5;
+  border-radius:0;
+}
+
+.container{
+  margin-right:0px;
+  margin-left:0px;
+  padding-left:15px;
+  margin-top:200px;
+  padding-right:15px;
+}
+
+form{
+}
+
+div.headerIndex{
+  padding-top:200px;
+}
+
+header.header-Index{
+  padding-top:200px;
+}
+
+h1.index-head{
+  padding-top:160px;
+}
+
+button.btn.btn-default.index-btn{
+  margin-top:10px;
+}
+
+div.index-btnAceptar{
+  text-align:center;
+}
+
+div.div-label-datosCliente{
+  text-align:center;
+  width:320px;
+  margin:20px auto;
+}
+
+div.div-datosCliente{
+  margin:20px auto;
+  width:600px;
+}
+
+div.div-pedidosRealizados{
+  margin:20px auto;
+  width:1150px;
+}
+
+form.form-btn-nuevoPedido{
+  text-align:center;
+}
+
+div#mymodal.modal.fade{
+  margin-top:200px;
+}
+
+modal-input-text{
+  margin:20px auto;
+}
+
+form-modal-adminCliente{
+}
+
+form-modal-adminCliente{
+}
+
+div-login{
+  margin:20px auto;
+}
+
+div-login{
+  margin:20px auto;
+  width:320px;
+}
+
+div-login{
+  margin:auto;
+}
+
+div-loigin{
+  margin:auto;
+}
+
+div-login{
+  margin:auto;
+}
+
+div.div-login{
+  margin:auto;
+}
+
+asd{
+}
+
+login{
+  margin:auto;
+}
+
+div.login{
+  width:230px;
+}
+
+div#login{
+  margin:20px auto;
+  width:330px;
+  text-align:center;
+}
+
+div#btn-modal-AdminCliente{
+  margin:auto;
+}
+
+div#modal-footer-adminCliente{
+  margin:auto;
+}
+
+div#divEmitirOp{
+  width:600px;
+  margin:0px auto;
+  margin-top:30px;
+}
+
+div#divEmitirOpForm{
+  margin-top:20px;
+  margin-bottom:20px;
+}
+
+button#btnEmitirOp.btn.btn-default{
+}
+
+div#divEmitirOpForm{
+  text-align:center;
+}
+
+div#cobranza{
+  margin:0px auto;
+  width:400px;
+}
+
+div#manejoStock{
+  width:220px;
+  margin:0px auto;
+  text-align:center;
+}
+
+button#btnManejoStock.btn.btn-default{
+  margin-top:20px;
+  margin-bottom:30px;
+}
+
+button#btnManejoStock.btn.btn-warning{
+  margin-top:40px;
+}
+
+div#adminFact{
+  width:330px;
+  margin:0px auto;
+  margin-top:60px;
+  text-align:center;
+}
+
+button#btnAdminFact.btn.btn-default{
+  margin-top:30px;
+}
+
+button#btnAdminFact.btn.btn-warning{
+  margin-top:30px;
+}
+
+div#tablasFactRem{
+  width:1000px;
+  margin:0px auto;
+}
+
+div#menu{
+  margin:0px auto;
+  width:700px;
+  text-align:center;
+  margin-top:80px;
+}
+
+button#btnMenu.btn.btn-default{
+  margin:40px;
+}
+
+button#btnMenu.btn.btn-warning{
+  margin:50px;
+}
+
+div#atras{
+  width:230px;
+  margin:auto;
+  text-align:center;
+  margin-top:50px;
+  margin-bottom:30px;
+}
+
+div#datosNuevoPedido{
+  width:300px;
+  margin:0 auto;
+  margin-top:20px;
+}
+
+span#nuevoPedido.label.label-primary{
+  margin-right:15px;
+}
+
+div#separador{
+  margin-top:7px;
+  margin-bottom:7px;
+}
+
+div#nuevoPedido{
+  width:300px;
+  margin:0px auto;
+  margin-top:20px;
+}
+
+label#labelcheck.control-label{
+  color:black;
+}
+
+span#labelNuevoPedido.label.label-warning{
+  font-size:14px;
+}
+
+.table-responsive{
+  overflow-x:auto;
+  min-height:0.01%;
+}
+
+table{
+  font-size:15px;
+}
+
+
+div#menuesLindos{
+  width:400px;
+  margin:0px auto;
+  margin-top:120px;
+}
+
+button.btn.btn-primary.btn-lg.btn-block{
+  border-radius:15px;
+  font-family:serif;
+  font-size:22px;
+}
+
+div#tablaVerMovimientos{
+  width:1000px;
+  margin:50px auto;
+}

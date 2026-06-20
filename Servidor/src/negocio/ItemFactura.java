@@ -1,6 +1,7 @@
 package negocio;
 
 import dao.ItemFacturaDao;
+import dto.FacturaDTO;
 import dto.ItemFacturaDTO;
 import entities.ItemFacturaEntity;
 import excepciones.FacturaException;
@@ -59,11 +60,11 @@ public class ItemFactura {
 		return aux;
 	}
 	
-	public ItemFacturaDTO toDTO (){
+	public ItemFacturaDTO toDTO (FacturaDTO f){
 		ItemFacturaDTO aux = new ItemFacturaDTO();
 		aux.setArticulo(this.getArticulo().toDTO());
 		aux.setCantidad(this.getCantidad());
-		aux.setFactura(this.getFactura().toDTO());
+		aux.setFactura(f);
 		aux.setIdItemFact(this.getIdItemFact());
 		aux.setPrecio(this.getPrecioSubTotal());
 		return aux;

@@ -1,6 +1,5 @@
 package negocio;
 
-
 import dao.ArticuloDepositoDao;
 import dto.ArticuloDepositoDTO;
 import entities.ArticuloDepositoEntity;
@@ -46,7 +45,6 @@ public class ArticuloDeposito {
 		aux.setLote(this.lote.toEntityUpdate());
 		aux.setUbicacion(this.ubicacion.toEntity());
 		aux.setReservaIdPedido(this.reservaIdPedido);
-		//aux.setIdArticuloDeposito(this.idArticuloDeposito);
 		return aux;
 	}
 
@@ -57,6 +55,19 @@ public class ArticuloDeposito {
 		aux.setLote(this.lote.toEntityUpdate());
 		aux.setUbicacion(this.ubicacion.toEntity());
 		aux.setReservaIdPedido(this.reservaIdPedido);
+		aux.setIdArticuloDeposito(this.idArticuloDeposito);
+		return aux;
+	}
+	
+	
+
+	public ArticuloDepositoEntity toEntityDelete() { 
+		ArticuloDepositoEntity aux = new ArticuloDepositoEntity();
+		//aux.setArticulo(this.articulo.toEntityUpdate());
+		//aux.setEstado(this.estado);
+		//aux.setLote(this.lote.toEntityUpdate());
+		//aux.setUbicacion(this.ubicacion.toEntityUpdate());
+		//aux.setReservaIdPedido(this.reservaIdPedido);
 		aux.setIdArticuloDeposito(this.idArticuloDeposito);
 		return aux;
 	}
@@ -140,4 +151,9 @@ public class ArticuloDeposito {
 	public void setUbicacion(Ubicacion ubicacion) {
 		this.ubicacion = ubicacion;
 	}
+
+	public void delete() throws ArticuloException {
+		ArticuloDepositoDao.getInstancia().delete(this);
+	}
+
 }

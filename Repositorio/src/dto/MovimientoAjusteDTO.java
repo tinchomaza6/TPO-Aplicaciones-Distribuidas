@@ -1,20 +1,19 @@
 package dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
-public class MovimientoAjusteDTO implements Serializable{
-
+public class MovimientoAjusteDTO extends MovimientoStockDTO implements Serializable{
 	private static final long serialVersionUID = 8558888602244826288L;
 	
 	private String encargado;
-	private String descripcion;
 	
-	public MovimientoAjusteDTO (String encargado, String descripcion){
-		super();
+	public MovimientoAjusteDTO (int idMov, Date fecha, ArticuloDTO articulo, String descripcion, String encargado){
+		super(idMov, fecha, articulo, "AJUSTE", descripcion);
 		this.encargado = encargado;
-		this.descripcion = descripcion;
 	}
-//Getters y Setters
+	
+	//Getters y Setters
 
 	public String getEncargado() {
 		return encargado;

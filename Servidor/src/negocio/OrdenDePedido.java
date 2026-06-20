@@ -27,7 +27,7 @@ public class OrdenDePedido {
 		this.idOp = idOp;
 		this.pedido = pedido;
 		this.estado = estado;
-		this.ordenesDeCompra = ordenesDeCompra;
+		this.ordenesDeCompra = ordenesDeCompra; 
 		this.articulos = articulos;
 	}
 
@@ -36,11 +36,13 @@ public class OrdenDePedido {
 		this.pedido = pedido;
 		this.estado = estado;
 		this.articulos = new ArrayList<ItemOrdenDePedido>();
+		this.ordenesDeCompra = new ArrayList<OrdenDeCompra>();
 	}
 
 	public OrdenDePedido() {
 		super();
 		this.articulos = new ArrayList<ItemOrdenDePedido>();
+		this.ordenesDeCompra = new ArrayList<OrdenDeCompra>();
 	}
 
 	public void actualizarEstado (String estado){
@@ -65,9 +67,9 @@ public class OrdenDePedido {
 		OrdenDePedidoDTO aux = new OrdenDePedidoDTO();
 		aux.setEstado(this.getEstado());
 		aux.setIdOp(this.getIdOp());
-		aux.setArticulos(this.getArticulosDTO());
 		aux.setOrdenesDeCompra(this.getOrdenesDeCompraDTO());
 		aux.setPedido(this.getPedido().toDTO());
+		aux.setArticulos(this.getArticulosDTO(aux));
 		return aux;
 	}
 
@@ -161,10 +163,10 @@ public class OrdenDePedido {
 	}
 
 
-	public List<ItemOrdenDePedidoDTO> getArticulosDTO() {
+	public List<ItemOrdenDePedidoDTO> getArticulosDTO(OrdenDePedidoDTO op) {
 		List<ItemOrdenDePedidoDTO> list = new ArrayList<ItemOrdenDePedidoDTO>();
 		for (ItemOrdenDePedido p: this.getArticulos()){
-			list.add(p.toDTO());
+			list.add(p.toDTO(op));
 		}
 		return list;
 	}

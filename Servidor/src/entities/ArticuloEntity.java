@@ -44,10 +44,12 @@ public class ArticuloEntity implements Serializable{
 		this.proveedores = proveedores;
 	}
 	
-	public Articulo toNegocio() {
+	public Articulo toNegocio() { 
 		return new Articulo(this.idArticulo,this.nombre, this.CapacidadArticulo, this.codBarras, this.descripcion,
 				this.presentacion, this.unidadMedida,this.cantCompraFija, this.precioVentaUnitario);
 	}
+
+	
 
 
 	//GETTERS Y SETTERS

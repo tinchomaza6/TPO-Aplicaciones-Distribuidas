@@ -1,6 +1,9 @@
 package negocio;
 
 import java.util.*;
+
+import javax.swing.JOptionPane;
+
 import dao.OrdenDeCompraDao;
 import dto.ItemOrdenDeCompraDTO;
 import dto.OrdenDeCompraDTO;
@@ -112,9 +115,9 @@ public class OrdenDeCompra {
 		oc.setEstado(this.getEstado());
 		oc.setFecha(this.getFecha());
 		oc.setIdOc(this.getIdOc());
-		oc.setItems(this.getItemsDTO());
-		oc.setOrdenPedidoDTO(this.getOrdenPedido().toDTO());
 		oc.setProv(this.getProv().toDTO());
+		oc.setOrdenPedidoDTO(this.getOrdenPedido().toDTO());
+		oc.setItems(this.getItemsDTO(oc));
 		return oc;
 	}
 
@@ -181,10 +184,10 @@ public class OrdenDeCompra {
 		return list;
 	}
 
-	public List<ItemOrdenDeCompraDTO> getItemsDTO() {
+	public List<ItemOrdenDeCompraDTO> getItemsDTO(OrdenDeCompraDTO oc) {
 		List<ItemOrdenDeCompraDTO> list = new ArrayList<ItemOrdenDeCompraDTO>();
 		for (ItemOrdenDeCompra o: this.getItems()){
-			list.add(o.toDTO());
+			list.add(o.toDTO(oc));
 		}
 		return list;
 	}

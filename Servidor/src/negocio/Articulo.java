@@ -47,10 +47,10 @@ public class Articulo {
 		this.precioVentaUnitario = precioVentaUnitario;
 	}
 
-	public ArticuloEntity toEntityUpdate(){
+	public ArticuloEntity toEntityUpdate(){ 
 		ArticuloEntity aux = new ArticuloEntity();
 		aux.setCantCompraFija(this.cantCompraFija);
-		aux.setCapacidadArticulo(this.CapacidadArticulo);
+		aux.setCapacidadArticulo(this.CapacidadArticulo); 
 		aux.setCodBarras(this.codBarras);
 		aux.setDescripcion(this.descripcion);
 		aux.setIdArticulo(this.idArticulo);
@@ -74,7 +74,6 @@ public class Articulo {
 		aux.setUnidadMedida(this.unidadMedida);
 		return aux;
 	}
-
 
 	
 	public ArticuloDTO toDTO() {
